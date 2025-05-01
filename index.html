@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ランダム画像表示</title>
     <style>
-        /* ページ全体のサイズを指定 */
+        /* ページ全体をフレックスで中央揃え */
         body {
             margin: 0;
             height: 100vh;
@@ -13,7 +13,6 @@
             justify-content: center;
             align-items: center;
         }
-
         /* 元のペア画像を横並びに表示 */
         .image-container {
             display: flex;
@@ -21,12 +20,15 @@
             width: 420px;
             gap: 20px;
         }
-
-        /* 新しい画像用コンテナ（非表示） */
+        /* 新しい画像用コンテナ：非表示 → 表示時はフレックスで中央に */
         .new-image-container {
             display: none;
+            width: 420px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
         img {
             width: 200px;
             height: 200px;
@@ -74,14 +76,11 @@
             document.getElementById('image2').src = src2;
         }
 
-        // クリック時に新画像を中央に表示し、元画像を非表示
+        // クリック時：元ペアを非表示 → 新画像を中央に表示
         function changeImage() {
-            // 元のペアを非表示
             document.querySelector('.image-container').style.display = 'none';
-            // 新しい画像のコンテナ表示
             const newContainer = document.querySelector('.new-image-container');
-            newContainer.style.display = 'block';
-            // 新画像を設定
+            newContainer.style.display = 'flex';
             document.getElementById('newImage').src = newImages[currentPairIndex];
         }
 
@@ -89,3 +88,4 @@
     </script>
 </body>
 </html>
+

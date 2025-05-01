@@ -8,34 +8,42 @@
         /* ページ全体のサイズを指定 */
         body {
             margin: 0;
-            height: 100vh; /* ウィンドウの高さ全体 */
+            height: 100vh;
             display: flex;
-            justify-content: center; /* 水平方向の中央揃え */
-            align-items: center; /* 垂直方向の中央揃え */
+            justify-content: center;
+            align-items: center;
         }
 
-        /* 画像を横並びに表示するためのスタイル */
+        /* 元のペア画像を横並びに表示 */
         .image-container {
             display: flex;
-            justify-content: space-between; /* 画像を等間隔で配置 */
-            width: 420px; /* コンテナの幅を画像2枚分の幅に */
-            gap: 20px; /* 画像の間に余白を追加 */
-            max-height: 400px; /* コンテナの高さを最大500pxに */
-            margin: 0 auto; /* コンテナを中央に配置 */
+            justify-content: space-between;
+            width: 420px;
+            gap: 20px;
+        }
+
+        /* 新しい画像用コンテナ（非表示） */
+        .new-image-container {
+            display: none;
         }
 
         img {
-            width: 200px; /* 画像の幅を200pxに固定 */
-            height: 200px; /* 高さは自動調整 */
-            cursor: pointer; /* クリック可能なカーソル */
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    <!-- 元のペア画像 -->
     <div class="image-container">
-        <!-- ランダムに選ばれた2枚の画像を表示するための要素 -->
-        <img id="image1" src="" alt="ランダム画像1" onclick="changeImage(1)">
-        <img id="image2" src="" alt="ランダム画像2" onclick="changeImage(2)">
+        <img id="image1" src="" alt="ランダム画像1" onclick="changeImage()">
+        <img id="image2" src="" alt="ランダム画像2" onclick="changeImage()">
+    </div>
+
+    <!-- クリック後に表示する新しい画像 -->
+    <div class="new-image-container">
+        <img id="newImage" src="" alt="新しい画像">
     </div>
 
     <script>
@@ -45,39 +53,38 @@
             ['images/term_photo3.jpg', 'images/term_photo4.jpg'],
             ['images/term_photo5.jpg', 'images/term_photo6.jpg']
         ];
-
         // 各ペアに対応する新しい画像
         const newImages = {
             0: 'images/new12.jpg',
             1: 'images/new34.jpg',
             2: 'images/new56.jpg'
         };
-
         let currentPairIndex = 0;
-        let selectedImages = [];
 
-        // ランダムなインデックスを生成する関数
+        // ランダムなインデックスを生成
         function getRandomIndex(max) {
             return Math.floor(Math.random() * max);
         }
 
-        // ページ読み込み時にランダムなペアの画像を表示
+        // ページ読み込み時にランダムペアを表示
         function displayRandomImages() {
             currentPairIndex = getRandomIndex(imagePairs.length);
-            selectedImages = imagePairs[currentPairIndex];
-
-            document.getElementById('image1').src = selectedImages[0];
-            document.getElementById('image2').src = selectedImages[1];
+            const [src1, src2] = imagePairs[currentPairIndex];
+            document.getElementById('image1').src = src1;
+            document.getElementById('image2').src = src2;
         }
 
-        // 画像がクリックされたときに新しい画像に変更する関数
-        function changeImage(imageNumber) {
-            const imgElement = document.getElementById(`image${imageNumber}`);
-            imgElement.src = newImages[currentPairIndex]; // 対応する新しい画像に変更
-            console.log(`Image ${imageNumber} clicked and changed to ${newImages[currentPairIndex]}`); // デバッグ用
+        // クリック時に新画像を中央に表示し、元画像を非表示
+        function changeImage() {
+            // 元のペアを非表示
+            document.querySelector('.image-container').style.display = 'none';
+            // 新しい画像のコンテナ表示
+            const newContainer = document.querySelector('.new-image-container');
+            newContainer.style.display = 'block';
+            // 新画像を設定
+            document.getElementById('newImage').src = newImages[currentPairIndex];
         }
 
-        // ページ読み込み時に関数を呼び出し
         window.onload = displayRandomImages;
     </script>
 </body>

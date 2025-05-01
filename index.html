@@ -25,7 +25,7 @@
         }
 
         img {
-            width: 200px; /* 画像の幅を300pxに固定 */
+            width: 200px; /* 画像の幅を200pxに固定 */
             height: 200px; /* 高さは自動調整 */
             cursor: pointer; /* クリック可能なカーソル */
         }
@@ -39,51 +39,45 @@
     </div>
 
     <script>
-        // 事前に保存した10枚の写真のパスを配列に格納
-        const images = [
-            'images/term_photo1.jpg',
-            'images/term_photo2.jpg',
-            //'images/term_photo3.jpg',
-            //'images/term_photo4.jpg',
-            //'images/term_photo5.jpg',
-            //'images/term_photo6.jpg',
-            //'images/term_photo7.jpg',
-            //'images/term_photo8.jpg',
-            //'images/term_photo9.jpg',
+        // 画像のペアを配列に格納
+        const imagePairs = [
+            ['images/term_photo1.jpg', 'images/term_photo2.jpg'],
+            ['images/term_photo3.jpg', 'images/term_photo4.jpg'],
+            ['images/term_photo5.jpg', 'images/term_photo6.jpg']
         ];
 
-        // 新しい画像のパス（1つだけ）
-        const newImage = 'images/new.jpg';
+        // 各ペアに対応する新しい画像
+        const newImages = {
+            0: 'images/new12.jpg',
+            1: 'images/new34.jpg',
+            2: 'images/new56.jpg'
+        };
 
+        let currentPairIndex = 0;
         let selectedImages = [];
-
-        // ランダムで2枚の異なる画像を選ぶ
-        function displayRandomImages() {
-            let index1 = getRandomIndex(images.length);
-            let index2;
-            do {
-                index2 = getRandomIndex(images.length);
-            } while (index1 === index2); // 同じ画像が選ばれないようにする
-
-            selectedImages = [images[index1], images[index2]]; // 選択した画像を保存
-
-            document.getElementById('image1').src = images[index1];
-            document.getElementById('image2').src = images[index2];
-        }
 
         // ランダムなインデックスを生成する関数
         function getRandomIndex(max) {
             return Math.floor(Math.random() * max);
         }
 
+        // ページ読み込み時にランダムなペアの画像を表示
+        function displayRandomImages() {
+            currentPairIndex = getRandomIndex(imagePairs.length);
+            selectedImages = imagePairs[currentPairIndex];
+
+            document.getElementById('image1').src = selectedImages[0];
+            document.getElementById('image2').src = selectedImages[1];
+        }
+
         // 画像がクリックされたときに新しい画像に変更する関数
         function changeImage(imageNumber) {
             const imgElement = document.getElementById(`image${imageNumber}`);
-            imgElement.src = newImage; // クリックされた画像を新しい画像に変更
-            console.log(`Image ${imageNumber} clicked and changed to ${newImage}`); // デバッグ用
+            imgElement.src = newImages[currentPairIndex]; // 対応する新しい画像に変更
+            console.log(`Image ${imageNumber} clicked and changed to ${newImages[currentPairIndex]}`); // デバッグ用
         }
 
-        // ページ読み込み時にランダムな画像を表示
+        // ページ読み込み時に関数を呼び出し
         window.onload = displayRandomImages;
     </script>
 </body>

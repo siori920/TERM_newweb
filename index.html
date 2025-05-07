@@ -39,8 +39,8 @@
 <body>
     <!-- 元のペア画像 -->
     <div class="image-container">
-        <img id="image1" src="" alt="ランダム画像1" onclick="changeImage()">
-        <img id="image2" src="" alt="ランダム画像2" onclick="changeImage()">
+        <img id="image1" src="" alt="ランダム画像1" onclick="changeImage('left')">
+        <img id="image2" src="" alt="ランダム画像2" onclick="changeImage('right')">
     </div>
 
     <!-- クリック後に表示する新しい画像 -->
@@ -62,6 +62,7 @@
             2: 'images/new56.jpg'
         };
         let currentPairIndex = 0;
+        let clickedSide = ''; // クリックされた画像の側（'left' or 'right'）
 
         // ランダムなインデックスを生成
         function getRandomIndex(max) {
@@ -76,8 +77,11 @@
             document.getElementById('image2').src = src2;
         }
 
-        // クリック時：元ペアを非表示 → 新画像を中央に表示
-        function changeImage() {
+        // クリック時：どちらをクリックしたか記録 → 新画像を表示
+        function changeImage(side) {
+            clickedSide = side;
+            console.log('クリックされた画像:', clickedSide); // ← コンソールで確認可能
+
             document.querySelector('.image-container').style.display = 'none';
             const newContainer = document.querySelector('.new-image-container');
             newContainer.style.display = 'flex';
@@ -88,4 +92,5 @@
     </script>
 </body>
 </html>
+
 

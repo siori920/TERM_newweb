@@ -3,72 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ランダム画像表示</title>
+    <title>観光地選択</title>
     <style>
-        /* ページ全体をフレックスで中央揃え */
+        /* ページ全体の設定 */
         body {
             margin: 0;
-            height: 100vh;
+            width: 1080px;
+            height: 1420px;
+            background: linear-gradient(to bottom, #d26b2e, #e79353);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            font-family: Arial, sans-serif;
         }
-        /* 元のペア画像を横並びに表示 */
+        
+        /* タイトル */
+        .title {
+            margin-top: 100px;
+            font-size: 50px;
+            color: #fcf2e5;
+            text-align: center;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 80px;
+        }
+        
+        /* 画像ペア表示用コンテナ */
         .image-container {
             display: flex;
-            justify-content: space-between;
-            width: 420px;
-            gap: 20px;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
         }
-        /* 新しい画像用コンテナ：非表示 → 表示時はフレックスで中央に */
+        
+        /* 新しい画像用コンテナ：最初は完全に非表示 */
         .new-image-container {
             display: none;
-            width: 420px;
-            height: 200px;
-            display: flex;
+            width: 100%;
             justify-content: center;
             align-items: center;
         }
-        img {
-            width: 200px;
-            height: 200px;
+        
+        /* 画像のスタイル */
+        .image-container img {
+            width: 400px;
+            height: 300px;
             cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        
+        .image-container img:hover {
+            transform: scale(1.05);
+        }
+        
+        .new-image-container img {
+            width: 600px;
+            height: 450px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
+    <!-- タイトル -->
+    <div class="title">
+        あなたなら<br>
+        どっちの観光地に行きたい？
+    </div>
+    
     <!-- 元のペア画像 -->
     <div class="image-container">
-        <img id="image1" src="" alt="ランダム画像1" onclick="changeImage('left')">
-        <img id="image2" src="" alt="ランダム画像2" onclick="changeImage('right')">
+        <img id="image1" src="" alt="観光地1" onclick="changeImage('left')">
+        <img id="image2" src="" alt="観光地2" onclick="changeImage('right')">
     </div>
-
+    
     <!-- クリック後に表示する新しい画像 -->
     <div class="new-image-container">
-        <img id="newImage" src="" alt="新しい画像">
+        <img id="newImage" src="" alt="選択された観光地">
     </div>
-
+    
     <script>
-        // 画像のペアを配列に格納
+        // 画像のペアを配列に格納（元の2つの画像のみ）
         const imagePairs = [
             ['images/term_photo1.jpg', 'images/term_photo2.jpg'],
             ['images/term_photo3.jpg', 'images/term_photo4.jpg'],
             ['images/term_photo5.jpg', 'images/term_photo6.jpg']
         ];
-        // 各ペアに対応する新しい画像
+        
+        // 各ペアに対応する新しい画像（結果表示用）
         const newImages = {
             0: 'images/new12.jpg',
             1: 'images/new34.jpg',
             2: 'images/new56.jpg'
         };
+        
         let currentPairIndex = 0;
         let clickedSide = ''; // クリックされた画像の側（'left' or 'right'）
-
+        
         // ランダムなインデックスを生成
         function getRandomIndex(max) {
             return Math.floor(Math.random() * max);
         }
-
+        
         // ページ読み込み時にランダムペアを表示
         function displayRandomImages() {
             currentPairIndex = getRandomIndex(imagePairs.length);
@@ -76,18 +114,18 @@
             document.getElementById('image1').src = src1;
             document.getElementById('image2').src = src2;
         }
-
-        // クリック時：どちらをクリックしたか記録 → 新画像を表示
+        
+        // クリック時：どちらをクリックしたか記録
         function changeImage(side) {
             clickedSide = side;
-            console.log('クリックされた画像:', clickedSide); // ← コンソールで確認可能
-
-            document.querySelector('.image-container').style.display = 'none';
-            const newContainer = document.querySelector('.new-image-container');
-            newContainer.style.display = 'flex';
-            document.getElementById('newImage').src = newImages[currentPairIndex];
+            console.log('クリックされた画像:', clickedSide);
+            console.log('選択されたペア:', currentPairIndex);
+            
+            // ここで何かしらの処理を行う（例：データ送信、別ページ遷移など）
+            // 現在は選択されたことをコンソールに記録するのみ
         }
-
+        
+        // ページ読み込み時に実行
         window.onload = displayRandomImages;
     </script>
 </body>

@@ -15,6 +15,7 @@
             flex-direction: column;
             align-items: center;
             font-family: Arial, sans-serif;
+            position: relative;
         }
         
         /* タイトル */
@@ -42,6 +43,31 @@
             width: 100%;
             justify-content: center;
             align-items: center;
+        }
+        
+        /* メニューボタン */
+        .menu-button {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            transition: transform 0.2s;
+        }
+        
+        .menu-button:hover {
+            transform: translateX(-50%) scale(1.1);
         }
         
         /* 画像のスタイル */
@@ -84,6 +110,11 @@
         <img id="newImage" src="" alt="選択された観光地">
     </div>
     
+    <!-- メニューボタン -->
+    <div class="menu-button" onclick="goToMenu()">
+        メニュー
+    </div>
+    
     <script>
         // 画像のペアを配列に格納（元の2つの画像のみ）
         const imagePairs = [
@@ -115,14 +146,24 @@
             document.getElementById('image2').src = src2;
         }
         
-        // クリック時：どちらをクリックしたか記録
+        // クリック時：どちらをクリックしたか記録 → 新画像を表示
         function changeImage(side) {
             clickedSide = side;
             console.log('クリックされた画像:', clickedSide);
             console.log('選択されたペア:', currentPairIndex);
             
-            // ここで何かしらの処理を行う（例：データ送信、別ページ遷移など）
-            // 現在は選択されたことをコンソールに記録するのみ
+            // 元の画像ペアを非表示にし、新しい画像を表示
+            document.querySelector('.image-container').style.display = 'none';
+            const newContainer = document.querySelector('.new-image-container');
+            newContainer.style.display = 'flex';
+            document.getElementById('newImage').src = newImages[currentPairIndex];
+        }
+        
+        // メニューボタンのクリック処理
+        function goToMenu() {
+            console.log('メニューボタンがクリックされました');
+            // ここにメニュー画面への遷移処理を追加
+            alert('メニューに移動します');
         }
         
         // ページ読み込み時に実行

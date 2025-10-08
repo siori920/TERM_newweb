@@ -8,8 +8,8 @@
         /* ページ全体の設定 */
         body {
             margin: 0;
-            width: 1000px;
-            height: 1420px;
+            width: 810px;
+            height: 945px;
             background: linear-gradient(to bottom, #d26b2e, #e79353);
             display: flex;
             flex-direction: column;
@@ -20,20 +20,21 @@
         
         /* タイトル */
         .title {
-            margin-top: 30px;
-            font-size: 15px;
+            margin-top: 50px;
+            font-size: 28px;
             color: #fcf2e5;
             text-align: center;
             font-weight: bold;
-            line-height: 1.2;
-            margin-bottom: 25px;
+            line-height: 1.3;
+            margin-bottom: 60px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         /* 画像ペア表示用コンテナ */
         .image-container {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 25px;
             width: 100%;
         }
         
@@ -48,47 +49,75 @@
         /* メニューボタン */
         .menu-button {
             position: absolute;
-            bottom: 100px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
-            height: 30px;
+            width: 120px;
+            height: 45px;
             background-color: white;
-            border-radius: 50%;
+            border-radius: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            font-size: 5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            font-size: 16px;
             font-weight: bold;
             color: #333;
             transition: transform 0.2s;
+            border: none;
         }
         
         .menu-button:hover {
-            transform: translateX(-50%) scale(1.1);
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
         }
         
         /* 画像のスタイル */
         .image-container img {
-            width: 123px;
-            height: 92px;
+            width: 280px;
+            height: 210px;
             cursor: pointer;
-            border-radius: 3px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            object-fit: cover;
         }
         
         .image-container img:hover {
             transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
         }
         
         .new-image-container img {
-            width: 185px;
-            height: 138px;
-            border-radius: 3px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            width: 420px;
+            height: 315px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            object-fit: cover;
+        }
+        
+        /* プレースホルダー画像のスタイル */
+        .placeholder {
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .new-placeholder {
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
         }
     </style>
 </head>
@@ -101,19 +130,19 @@
     
     <!-- 元のペア画像 -->
     <div class="image-container">
-        <img id="image1" src="" alt="観光地1" onclick="changeImage('left')">
-        <img id="image2" src="" alt="観光地2" onclick="changeImage('right')">
+        <img id="image1" src="" alt="観光地1" onclick="changeImage('left')" class="placeholder">
+        <img id="image2" src="" alt="観光地2" onclick="changeImage('right')" class="placeholder">
     </div>
     
     <!-- クリック後に表示する新しい画像 -->
     <div class="new-image-container">
-        <img id="newImage" src="" alt="選択された観光地">
+        <img id="newImage" src="" alt="選択された観光地" class="new-placeholder">
     </div>
     
     <!-- メニューボタン -->
-    <div class="menu-button" onclick="goToMenu()">
+    <button class="menu-button" onclick="goToMenu()">
         メニュー
-    </div>
+    </button>
     
     <script>
         // 画像のペアを配列に格納（元の2つの画像のみ）
@@ -142,8 +171,37 @@
         function displayRandomImages() {
             currentPairIndex = getRandomIndex(imagePairs.length);
             const [src1, src2] = imagePairs[currentPairIndex];
-            document.getElementById('image1').src = src1;
-            document.getElementById('image2').src = src2;
+            
+            const img1 = document.getElementById('image1');
+            const img2 = document.getElementById('image2');
+            
+            // 画像読み込み処理
+            img1.onload = function() {
+                this.classList.remove('placeholder');
+                this.style.background = 'none';
+            };
+            img1.onerror = function() {
+                this.classList.add('placeholder');
+                this.innerHTML = '観光地画像1';
+                this.removeAttribute('src');
+            };
+            
+            img2.onload = function() {
+                this.classList.remove('placeholder');
+                this.style.background = 'none';
+            };
+            img2.onerror = function() {
+                this.classList.add('placeholder');
+                this.innerHTML = '観光地画像2';
+                this.removeAttribute('src');
+            };
+            
+            // プレースホルダーテキストを設定
+            img1.innerHTML = '観光地画像1';
+            img2.innerHTML = '観光地画像2';
+            
+            img1.src = src1;
+            img2.src = src2;
         }
         
         // クリック時：どちらをクリックしたか記録 → 新画像を表示
@@ -156,14 +214,34 @@
             document.querySelector('.image-container').style.display = 'none';
             const newContainer = document.querySelector('.new-image-container');
             newContainer.style.display = 'flex';
-            document.getElementById('newImage').src = newImages[currentPairIndex];
+            
+            const newImg = document.getElementById('newImage');
+            newImg.onload = function() {
+                this.classList.remove('new-placeholder');
+                this.style.background = 'none';
+                this.innerHTML = '';
+            };
+            newImg.onerror = function() {
+                this.classList.add('new-placeholder');
+                this.innerHTML = '選択された<br>観光地画像';
+                this.removeAttribute('src');
+            };
+            
+            // プレースホルダーテキストを設定
+            newImg.innerHTML = '選択された<br>観光地画像';
+            newImg.src = newImages[currentPairIndex];
         }
         
         // メニューボタンのクリック処理
         function goToMenu() {
             console.log('メニューボタンがクリックされました');
-            // ここにメニュー画面への遷移処理を追加
-            alert('メニューに移動します');
+            
+            // 画面をリセットして最初の状態に戻す
+            document.querySelector('.image-container').style.display = 'flex';
+            document.querySelector('.new-image-container').style.display = 'none';
+            
+            // 新しいランダムペアを表示
+            displayRandomImages();
         }
         
         // ページ読み込み時に実行

@@ -232,21 +232,68 @@
             newImg.innerHTML = '選択された<br>観光地画像';
             newImg.src = newImages[currentPairIndex];
         }
-        
-        // メニューボタンのクリック処理
+                // メニューボタンのクリック処理
         function goToMenu() {
-            console.log('メニューボタンがクリックされました');
-            
-            // 画面をリセットして最初の状態に戻す
             document.querySelector('.image-container').style.display = 'flex';
             document.querySelector('.new-image-container').style.display = 'none';
-            
-            // 新しいランダムペアを表示
             displayRandomImages();
         }
         
+        // 統計を表示
+        function showStats() {
+            console.clear();
+            console.log('='.repeat(70));
+            console.log('📊 観光地画像選択統計');
+            console.log('='.repeat(70));
+            
+            for (let i = 0; i < 3; i++) {
+                const pairKey = `pair${i}`;
+                const stats = imageStats[pairKey];
+                const total = stats.left + stats.right;
+                const leftPercent = total > 0 ? Math.round(stats.left / total * 100) : 0;
+                const rightPercent = total > 0 ? Math.round(stats.right / total * 100) : 0;
+                
+                console.log(`\n【ペア${i + 1}】`);
+                console.log('-'.repeat(60));
+                console.log(`左の画像: ${stats.leftImage}`);
+                console.log(`  → ${stats.left}人が選択 (${leftPercent}%)`);
+                console.log(`右の画像: ${stats.rightImage}`);
+                console.log(`  → ${stats.right}人が選択 (${rightPercent}%)`);
+                console.log(`合計: ${total}人`);
+            }
+            
+            console.log('\n' + '='.repeat(70));
+            console.log('💡 統計をリセットするには: resetImageStats()');
+            console.log('='.repeat(70));
+            
+            alert('統計をコンソールに表示しました。\nF12キーを押してコンソールを確認してください。');
+        }
+        
+        // 統計をリセット
+        function resetImageStats() {
+            if (confirm('すべての統計をリセットしますか？')) {
+                imageStats = {
+                    pair0: { left: 0, right: 0, leftImage: 'term_photo1.jpg', rightImage: 'term_photo2.jpg' },
+                    pair1: { left: 0, right: 0, leftImage: 'term_photo3.jpg', rightImage: 'term_photo4.jpg' },
+                    pair2: { left: 0, right: 0, leftImage: 'term_photo5.jpg', rightImage: 'term_photo6.jpg' }
+                };
+                saveStats();
+                console.log('✅ 統計をリセットしました');
+                showStats();
+            }
+        }
+        
+        // グローバルに関数を公開
+        window.resetImageStats = resetImageStats;
+        window.showStats = showStats;
+        
         // ページ読み込み時に実行
-        window.onload = displayRandomImages;
+        window.onload = function() {
+            displayRandomImages();
+            console.log('📝 観光地選択サイトが読み込まれました');
+            console.log('💡 統計を見るには「統計表示」ボタンをクリックしてください');
+            console.log('💡 またはコンソールで showStats() を実行してください');
+        };
     </script>
 </body>
 </html>

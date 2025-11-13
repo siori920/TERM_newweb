@@ -153,7 +153,7 @@
     <!-- タイトル -->
     <div class="title">
         あなたなら<br>
-        どっちの観光地に行きたい?
+        どっちの観光地に行きたい？
     </div>
     
     <!-- 元のペア画像 -->
@@ -178,6 +178,196 @@
     </button>
     
     <script>
-        // 画像のペアを配列に格
+        // 画像のペアを配列に格納（元の2つの画像のみ）
+        const imagePairs = [
+            ['images/term_photo1.jpg', 'images/term_photo2.jpg'],
+            ['images/term_photo3.jpg', 'images/term_photo4.jpg'],
+            ['images/term_photo5.jpg', 'images/term_photo6.jpg']
+        ];
+        
+        // 各ペアに対応する新しい画像（結果表示用）
+        const newImages = {
+            0: 'images/new12.jpg',
+            1: 'images/new34.jpg',
+            2: 'images/new56.jpg'
+        };
+        
+        let currentPairIndex = 0;
+        let clickedSide = ''; // クリックされた画像の側（'left' or 'right'）
+        
+        // 統計データの初期化
+        let imageStats = {
+            pair0: { left: 0, right: 0, leftImage: 'term_photo1.jpg', rightImage: 'term_photo2.jpg' },
+            pair1: { left: 0, right: 0, leftImage: 'term_photo3.jpg', rightImage: 'term_photo4.jpg' },
+            pair2: { left: 0, right: 0, leftImage: 'term_photo5.jpg', rightImage: 'term_photo6.jpg' }
+        };
+        
+        // 統計をlocalStorageから読み込む
+        function loadStats() {
+            const saved = localStorage.getItem('touristVotingStats');
+            if (saved) {
+                try {
+                    imageStats = JSON.parse(saved);
+                    console.log('✅ 保存された統計を読み込みました');
+                } catch (e) {
+                    console.log('⚠️ 統計の読み込みに失敗しました。新規作成します。');
+                }
+            }
+        }
+        
+        // 統計を保存
+        function saveStats() {
+            localStorage.setItem('touristVotingStats', JSON.stringify(imageStats));
+            console.log('💾 統計を保存しました');
+        }
+        
+        // ランダムなインデックスを生成
+        function getRandomIndex(max) {
+            return Math.floor(Math.random() * max);
+        }
+        
+        // ページ読み込み時にランダムペアを表示
+        function displayRandomImages() {
+            currentPairIndex = getRandomIndex(imagePairs.length);
+            const [src1, src2] = imagePairs[currentPairIndex];
+            
+            const img1 = document.getElementById('image1');
+            const img2 = document.getElementById('image2');
+            
+            // 画像読み込み処理
+            img1.onload = function() {
+                this.classList.remove('placeholder');
+                this.style.background = 'none';
+            };
+            img1.onerror = function() {
+                this.classList.add('placeholder');
+                this.innerHTML = '観光地画像1';
+                this.removeAttribute('src');
+            };
+            
+            img2.onload = function() {
+                this.classList.remove('placeholder');
+                this.style.background = 'none';
+            };
+            img2.onerror = function() {
+                this.classList.add('placeholder');
+                this.innerHTML = '観光地画像2';
+                this.removeAttribute('src');
+            };
+            
+            // プレースホルダーテキストを設定
+            img1.innerHTML = '観光地画像1';
+            img2.innerHTML = '観光地画像2';
+            
+            img1.src = src1;
+            img2.src = src2;
+        }
+        
+        // クリック時：どちらをクリックしたか記録 → 新画像を表示
+        function changeImage(side) {
+            clickedSide = side;
+            
+            // 統計を更新
+            const pairKey = `pair${currentPairIndex}`;
+            if (side === 'left') {
+                imageStats[pairKey].left++;
+            } else {
+                imageStats[pairKey].right++;
+            }
+            saveStats();
+            
+            console.log('✅ 投票を記録しました');
+            console.log('クリックされた画像:', clickedSide);
+            console.log('選択されたペア:', currentPairIndex);
+            console.log('現在の統計:', imageStats[pairKey]);
+            
+            // 元の画像ペアを非表示にし、新しい画像を表示
+            document.querySelector('.image-container').style.display = 'none';
+            const newContainer = document.querySelector('.new-image-container');
+            newContainer.style.display = 'flex';
+            
+            const newImg = document.getElementById('newImage');
+            newImg.onload = function() {
+                this.classList.remove('new-placeholder');
+                this.style.background = 'none';
+                this.innerHTML = '';
+            };
+            newImg.onerror = function() {
+                this.classList.add('new-placeholder');
+                this.innerHTML = '選択された<br>観光地画像';
+                this.removeAttribute('src');
+            };
+            
+            // プレースホルダーテキストを設定
+            newImg.innerHTML = '選択された<br>観光地画像';
+            newImg.src = newImages[currentPairIndex];
+        }
+        
+        // メニューボタンのクリック処理
+        function goToMenu() {
+            document.querySelector('.image-container').style.display = 'flex';
+            document.querySelector('.new-image-container').style.display = 'none';
+            displayRandomImages();
+        }
+        
+        // 統計を表示
+        function showStats() {
+            console.clear();
+            console.log('='.repeat(70));
+            console.log('📊 観光地画像選択統計');
+            console.log('='.repeat(70));
+            
+            for (let i = 0; i < 3; i++) {
+                const pairKey = `pair${i}`;
+                const stats = imageStats[pairKey];
+                const total = stats.left + stats.right;
+                const leftPercent = total > 0 ? Math.round(stats.left / total * 100) : 0;
+                const rightPercent = total > 0 ? Math.round(stats.right / total * 100) : 0;
+                
+                console.log(`\n【ペア${i + 1}】`);
+                console.log('-'.repeat(60));
+                console.log(`左の画像: ${stats.leftImage}`);
+                console.log(`  → ${stats.left}人が選択 (${leftPercent}%)`);
+                console.log(`右の画像: ${stats.rightImage}`);
+                console.log(`  → ${stats.right}人が選択 (${rightPercent}%)`);
+                console.log(`合計: ${total}人`);
+            }
+            
+            console.log('\n' + '='.repeat(70));
+            console.log('💡 統計をリセットするには: resetImageStats()');
+            console.log('='.repeat(70));
+            
+            alert('統計をコンソールに表示しました。\nF12キーを押してコンソールを確認してください。');
+        }
+        
+        // 統計をリセット
+        function resetImageStats() {
+            if (confirm('すべての統計をリセットしますか？')) {
+                imageStats = {
+                    pair0: { left: 0, right: 0, leftImage: 'term_photo1.jpg', rightImage: 'term_photo2.jpg' },
+                    pair1: { left: 0, right: 0, leftImage: 'term_photo3.jpg', rightImage: 'term_photo4.jpg' },
+                    pair2: { left: 0, right: 0, leftImage: 'term_photo5.jpg', rightImage: 'term_photo6.jpg' }
+                };
+                saveStats();
+                console.log('✅ 統計をリセットしました');
+                showStats();
+            }
+        }
+        
+        // グローバルに関数を公開
+        window.resetImageStats = resetImageStats;
+        window.showStats = showStats;
+        
+        // ページ読み込み時に実行
+        window.onload = function() {
+            loadStats();
+            displayRandomImages();
+            console.log('📝 観光地選択サイトが読み込まれました');
+            console.log('💡 統計を見るには「統計表示」ボタンをクリックしてください');
+            console.log('💡 またはコンソールで showStats() を実行してください');
+        };
+    </script>
+</body>
+</html>
 
 

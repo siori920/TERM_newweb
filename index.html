@@ -161,7 +161,7 @@
     
     <script>
         // Google Apps Script Web App URL (デプロイ後のURLに置き換えてください)
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxcFKB3Y2Uv4HRwPSRV7Zu2LEIbVQgmDaGA7AWkt14A4iQacCNkDY-5ofxvL-GTW6yz8A/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxAR2NNKeRIQO64uqkc4115C3wpSygd_NGEYkRJCFbIuNiu8zdu1OgVxj8x4TVog77zsw/exec';
 
         // 画像のペアを配列に格納（元の2つの画像のみ）
         const imagePairs = [
@@ -202,16 +202,22 @@
             }
         }
         
-        // 統計を保存（サーバーに送信）
+        // 統計を保存（サーバーに送信）- 画像ファイル名を送信
         async function saveVote(pairIndex, side) {
+            // 画像ファイル名を取得
+            const pairKey = `pair${pairIndex}`;
+            const imageName = side === 'left' 
+                ? imageStats[pairKey].leftImage 
+                : imageStats[pairKey].rightImage;
+            
             try {
-                const url = `${API_URL}?pairIndex=${encodeURIComponent(pairIndex)}&side=${encodeURIComponent(side)}`;
+                const url = `${API_URL}?pairIndex=${encodeURIComponent(pairIndex)}&imageName=${encodeURIComponent(imageName)}`;
                 await fetch(url, {
                     method: 'POST',
                     mode: 'no-cors'
                 });
                 
-                console.log('💾 投票をサーバーに送信しました');
+                console.log('💾 投票をサーバーに送信しました:', imageName);
             } catch (e) {
                 console.error('❌ サーバー接続エラー:', e);
             }

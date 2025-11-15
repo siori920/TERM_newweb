@@ -120,9 +120,23 @@
             font-weight: bold;
             text-align: center;
         }
+
+        /* ローディング表示 */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #fcf2e5;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
+    <!-- ローディング表示 -->
+    <div class="loading" id="loading">読み込み中...</div>
+
     <!-- タイトル -->
     <div class="title">
         あなたなら<br>
@@ -146,6 +160,9 @@
     </button>
     
     <script>
+        // Google Apps Script Web App URL (デプロイ後のURLに置き換えてください)
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxcFKB3Y2Uv4HRwPSRV7Zu2LEIbVQgmDaGA7AWkt14A4iQacCNkDY-5ofxvL-GTW6yz8A/exec';
+
         // 画像のペアを配列に格納（元の2つの画像のみ）
         const imagePairs = [
             ['images/term_photo1.jpg', 'images/term_photo2.jpg'],
@@ -170,23 +187,34 @@
             pair2: { left: 0, right: 0, leftImage: 'term_photo5.jpg', rightImage: 'term_photo6.jpg' }
         };
         
-        // 統計をlocalStorageから読み込む
-        function loadStats() {
-            const saved = localStorage.getItem('touristVotingStats');
-            if (saved) {
-                try {
-                    imageStats = JSON.parse(saved);
-                    console.log('✅ 保存された統計を読み込みました');
-                } catch (e) {
-                    console.log('⚠️ 統計の読み込みに失敗しました。新規作成します。');
+        // 統計をサーバーから読み込む
+        async function loadStats() {
+            try {
+                const response = await fetch(API_URL);
+                if (response.ok) {
+                    imageStats = await response.json();
+                    console.log('✅ サーバーから統計を読み込みました');
+                } else {
+                    console.log('⚠️ サーバーから統計を取得できませんでした。初期値を使用します。');
                 }
+            } catch (e) {
+                console.log('⚠️ サーバー接続エラー。ローカルモードで動作します:', e);
             }
         }
         
-        // 統計を保存
-        function saveStats() {
-            localStorage.setItem('touristVotingStats', JSON.stringify(imageStats));
-            console.log('💾 統計を保存しました');
+        // 統計を保存（サーバーに送信）
+        async function saveVote(pairIndex, side) {
+            try {
+                const url = `${API_URL}?pairIndex=${encodeURIComponent(pairIndex)}&side=${encodeURIComponent(side)}`;
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors'
+                });
+                
+                console.log('💾 投票をサーバーに送信しました');
+            } catch (e) {
+                console.error('❌ サーバー接続エラー:', e);
+            }
         }
         
         // ランダムなインデックスを生成
@@ -232,17 +260,19 @@
         }
         
         // クリック時：どちらをクリックしたか記録 → 新画像を表示
-        function changeImage(side) {
+        async function changeImage(side) {
             clickedSide = side;
             
-            // 統計を更新
+            // ローカルの統計を更新
             const pairKey = `pair${currentPairIndex}`;
             if (side === 'left') {
                 imageStats[pairKey].left++;
             } else {
                 imageStats[pairKey].right++;
             }
-            saveStats();
+            
+            // サーバーに投票を送信
+            await saveVote(currentPairIndex, side);
             
             console.log('✅ 投票を記録しました');
             console.log('クリックされた画像:', clickedSide);
@@ -279,10 +309,20 @@
         }
         
         // 統計を表示
-        function showStats() {
+        async function showStats() {
+            try {
+                // サーバーから最新の統計を取得
+                const response = await fetch(API_URL);
+                if (response.ok) {
+                    imageStats = await response.json();
+                }
+            } catch (e) {
+                console.error('❌ 統計の取得に失敗しました:', e);
+            }
+
             console.clear();
             console.log('='.repeat(70));
-            console.log('📊 観光地画像選択統計');
+            console.log('📊 観光地画像選択統計（全ブラウザ・全デバイス共有）');
             console.log('='.repeat(70));
             
             for (let i = 0; i < 3; i++) {
@@ -302,37 +342,32 @@
             }
             
             console.log('\n' + '='.repeat(70));
-            console.log('💡 統計をリセットするには: resetImageStats()');
+            console.log('💡 統計をリセットするには、Googleスプレッドシートのデータを削除してください');
             console.log('='.repeat(70));
             
             alert('統計をコンソールに表示しました。\nF12キーを押してコンソールを確認してください。');
         }
         
-        // 統計をリセット
-        function resetImageStats() {
-            if (confirm('すべての統計をリセットしますか？')) {
-                imageStats = {
-                    pair0: { left: 0, right: 0, leftImage: 'term_photo1.jpg', rightImage: 'term_photo2.jpg' },
-                    pair1: { left: 0, right: 0, leftImage: 'term_photo3.jpg', rightImage: 'term_photo4.jpg' },
-                    pair2: { left: 0, right: 0, leftImage: 'term_photo5.jpg', rightImage: 'term_photo6.jpg' }
-                };
-                saveStats();
-                console.log('✅ 統計をリセットしました');
-                showStats();
-            }
-        }
-        
         // グローバルに関数を公開
-        window.resetImageStats = resetImageStats;
         window.showStats = showStats;
         
         // ページ読み込み時に実行
-        window.onload = function() {
-            loadStats();
-            displayRandomImages();
-            console.log('📝 観光地選択サイトが読み込まれました');
-            console.log('💡 統計を見るには「統計表示」ボタンをクリックしてください');
-            console.log('💡 またはコンソールで showStats() を実行してください');
+        window.onload = async function() {
+            const loading = document.getElementById('loading');
+            
+            try {
+                await loadStats();
+                displayRandomImages();
+                loading.style.display = 'none';
+                
+                console.log('📝 観光地選択サイトが読み込まれました');
+                console.log('💡 統計を見るには「統計表示」ボタンをクリックしてください');
+                console.log('💡 またはコンソールで showStats() を実行してください');
+                console.log('🌐 統計は全ブラウザ・全デバイスで共有されます');
+            } catch (e) {
+                console.error('❌ 初期化エラー:', e);
+                loading.textContent = 'エラーが発生しました';
+            }
         };
     </script>
 </body>

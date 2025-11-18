@@ -120,23 +120,9 @@
             font-weight: bold;
             text-align: center;
         }
-
-        /* ローディング表示 */
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            color: #fcf2e5;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
     </style>
 </head>
 <body>
-    <!-- ローディング表示 -->
-    <div class="loading" id="loading">読み込み中...</div>
-
     <!-- タイトル -->
     <div class="title">
         あなたなら<br>
@@ -187,7 +173,7 @@
             pair2: { left: 0, right: 0, leftImage: 'term_photo5.jpg', rightImage: 'term_photo6.jpg' }
         };
         
-        // 統計をサーバーから読み込む
+        // 統計をサーバーから読み込む(バックグラウンドで実行)
         async function loadStats() {
             try {
                 const response = await fetch(API_URL);
@@ -366,22 +352,17 @@
         window.showStats = showStats;
         
         // ページ読み込み時に実行
-        window.onload = async function() {
-            const loading = document.getElementById('loading');
+        window.onload = function() {
+            // 統計の読み込みはバックグラウンドで非同期実行
+            loadStats();
             
-            try {
-                await loadStats();
-                displayRandomImages();
-                loading.style.display = 'none';
-                
-                console.log('📝 観光地選択サイトが読み込まれました');
-                console.log('💡 統計を見るには「統計表示」ボタンをクリックしてください');
-                console.log('💡 またはコンソールで showStats() を実行してください');
-                console.log('🌐 統計は全ブラウザ・全デバイスで共有されます');
-            } catch (e) {
-                console.error('❌ 初期化エラー:', e);
-                loading.textContent = 'エラーが発生しました';
-            }
+            // 画像はすぐに表示
+            displayRandomImages();
+            
+            console.log('📝 観光地選択サイトが読み込まれました');
+            console.log('💡 統計を見るには「統計表示」ボタンをクリックしてください');
+            console.log('💡 またはコンソールで showStats() を実行してください');
+            console.log('🌐 統計は全ブラウザ・全デバイスで共有されます');
         };
     </script>
 </body>

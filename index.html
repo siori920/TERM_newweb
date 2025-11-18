@@ -38,7 +38,7 @@
             margin-top: 60px
         }
         
-        /* 新しい画像用コンテナ：最初は完全に非表示 */
+        /* 新しい画像用コンテナ:最初は完全に非表示 */
         .new-image-container {
             display: none;
             width: 100%;
@@ -140,7 +140,7 @@
     <!-- タイトル -->
     <div class="title">
         あなたなら<br>
-        どっちの観光地に行きたい？
+        どっちの観光地に行きたい?
     </div>
     
     <!-- 元のペア画像 -->
@@ -163,14 +163,14 @@
         // Google Apps Script Web App URL (デプロイ後のURLに置き換えてください)
         const API_URL = 'https://script.google.com/macros/s/AKfycbzZ0iVHCAwRe-Jq3eqwpQCE3NT8MpziRDDcLlcSYvz66k07dc3o4S79h0qWWQzchQ5FoA/exec';
 
-        // 画像のペアを配列に格納（元の2つの画像のみ）
+        // 画像のペアを配列に格納(元の2つの画像のみ)
         const imagePairs = [
             ['images/term_photo1.jpg', 'images/term_photo2.jpg'],
             ['images/term_photo3.jpg', 'images/term_photo4.jpg'],
             ['images/term_photo5.jpg', 'images/term_photo6.jpg']
         ];
         
-        // 各ペアに対応する新しい画像（結果表示用）
+        // 各ペアに対応する新しい画像(結果表示用)
         const newImages = {
             0: 'images/new12.jpg',
             1: 'images/new34.jpg',
@@ -178,7 +178,7 @@
         };
         
         let currentPairIndex = 0;
-        let clickedSide = ''; // クリックされた画像の側（'left' or 'right'）
+        let clickedSide = ''; // クリックされた画像の側('left' or 'right')
         
         // 統計データの初期化
         let imageStats = {
@@ -202,7 +202,7 @@
             }
         }
         
-        // 統計を保存（サーバーに送信）- 画像ファイル名を送信
+        // 統計を保存(サーバーに送信) - 画像ファイル名を送信
         async function saveVote(pairIndex, side) {
             // 画像ファイル名を取得
             const pairKey = `pair${pairIndex}`;
@@ -232,6 +232,14 @@
         function displayRandomImages() {
             currentPairIndex = getRandomIndex(imagePairs.length);
             const [src1, src2] = imagePairs[currentPairIndex];
+            
+            // タイトルの更新
+            const titleElement = document.querySelector('.title');
+            if (currentPairIndex === 0) {
+                titleElement.innerHTML = 'あなたなら<br>どっちのビールが飲みたい?';
+            } else {
+                titleElement.innerHTML = 'あなたなら<br>どっちの観光地に行きたい?';
+            }
             
             const img1 = document.getElementById('image1');
             const img2 = document.getElementById('image2');
@@ -265,7 +273,7 @@
             img2.src = src2;
         }
         
-        // クリック時：どちらをクリックしたか記録 → 新画像を表示
+        // クリック時:どちらをクリックしたか記録 → 新画像を表示
         async function changeImage(side) {
             clickedSide = side;
             
@@ -328,7 +336,7 @@
 
             console.clear();
             console.log('='.repeat(70));
-            console.log('📊 観光地画像選択統計（全ブラウザ・全デバイス共有）');
+            console.log('📊 観光地画像選択統計(全ブラウザ・全デバイス共有)');
             console.log('='.repeat(70));
             
             for (let i = 0; i < 3; i++) {

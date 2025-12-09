@@ -47,10 +47,37 @@
             margin-top: 20px
         }
         
+        /* 施設コンテンツへボタン */
+        .facility-button {
+            position: absolute;
+            bottom: 320px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 80px;
+            background-color: #d8d7d7;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            transition: transform 0.2s;
+            border: none;
+        }
+        
+        .facility-button:hover {
+            transform: translateX(-50%) scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+        
         /* メニューボタン */
         .menu-button {
             position: absolute;
-            bottom: 240px;
+            bottom: 210px;
             left: 50%;
             transform: translateX(-50%);
             width: 120px;
@@ -139,6 +166,11 @@
     <div class="new-image-container">
         <img id="newImage" src="" alt="選択された観光地" class="new-placeholder">
     </div>
+    
+    <!-- 施設コンテンツへボタン -->
+    <button class="facility-button" onclick="goToFacility()">
+        施設コンテンツへ
+    </button>
     
     <!-- メニューボタン -->
     <button class="menu-button" onclick="goToMenu()">
@@ -301,6 +333,13 @@
             newImg.src = newImages[currentPairIndex];
         }
         
+        // 施設コンテンツへボタンのクリック処理
+        function goToFacility() {
+            // 必要に応じて遷移先のURLを設定
+            alert('施設コンテンツへ移動します');
+            // window.location.href = 'facility.html'; // 実際のページに遷移する場合
+        }
+        
         // メニューボタンのクリック処理
         function goToMenu() {
             document.querySelector('.image-container').style.display = 'flex';
@@ -367,5 +406,3 @@
     </script>
 </body>
 </html>
-
-

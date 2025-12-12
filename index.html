@@ -197,6 +197,7 @@
         
         let currentPairIndex = 0;
         let clickedSide = ''; // クリックされた画像の側('left' or 'right')
+        let autoResetTimer = null; // 自動リセット用タイマー
         
         // 統計データの初期化
         let imageStats = {
@@ -331,19 +332,48 @@
             // プレースホルダーテキストを設定
             newImg.innerHTML = '選択された<br>観光地画像';
             newImg.src = newImages[currentPairIndex];
+            
+            // 20秒後に自動的に投票TOP画面に戻る
+            startAutoResetTimer();
         }
         
-        // 施設コンテンツへボタンのクリック処理
+        // 自動リセットタイマーを開始
+        function startAutoResetTimer() {
+            // 既存のタイマーがあればクリア
+            if (autoResetTimer) {
+                clearTimeout(autoResetTimer);
+            }
+            
+            // 20秒後に投票TOP画面に戻る
+            autoResetTimer = setTimeout(() => {
+                resetToTop();
+            }, 20000);
+        }
+        
+        // 自動リセットタイマーをクリア
+        function clearAutoResetTimer() {
+            if (autoResetTimer) {
+                clearTimeout(autoResetTimer);
+                autoResetTimer = null;
+            }
+        }
+        
+        // 投票TOP画面に戻る
+        function resetToTop() {
+            clearAutoResetTimer();
+            document.querySelector('.image-container').style.display = 'flex';
+            document.querySelector('.new-image-container').style.display = 'none';
+            displayRandomImages();
+        }
+        
+        // 施設コンテンツへボタン（再投票ボタン）のクリック処理
         function goToFacility() {
-            // 必要に応じて遷移先のURLを設定
-            // window.location.href = 'facility.html'; // 実際のページに遷移する場合
+            resetToTop();
         }
         
         // メニューボタンのクリック処理
         function goToMenu() {
-            document.querySelector('.image-container').style.display = 'flex';
-            document.querySelector('.new-image-container').style.display = 'none';
-            displayRandomImages();
+            resetToTop();
         }
         
         // 統計を表示
